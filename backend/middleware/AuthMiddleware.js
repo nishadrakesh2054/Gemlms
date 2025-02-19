@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 const asyncHandler = require("express-async-handler");
 const Auth = require("../Models/authModel");
 
-// Middleware to protect routes (checks if user is logged in)
+
 const protect = asyncHandler(async (req, res, next) => {
     let token;
 
@@ -35,7 +35,6 @@ const protect = asyncHandler(async (req, res, next) => {
     }
   });
 
-// Middleware for Role-Based Access Control
 const authorizeRoles = (...allowedRoles) => {
     return (req, res, next) => {
       if (!req.user || !allowedRoles.includes(req.user.roles)) {
