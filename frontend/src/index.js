@@ -7,12 +7,21 @@ import 'react-modal-video/css/modal-video.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
+import { ToastContainer } from "react-toastify";
+
+
+
+import { store } from './app/store'
+import { Provider } from 'react-redux'
 
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <>
-    <App />
+   <Provider store={store}>
+      <App />
+    </Provider>,
+    <ToastContainer/>
   </>
 );
 

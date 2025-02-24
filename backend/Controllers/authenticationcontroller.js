@@ -4,143 +4,82 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 // ------------------- First Admin Registration (No Protection) ------------
-const registerAdmin = asyncHandler(async (req, res) => {
-  try {
-    const { name, email, password } = req.body;
-
-    // Check if an admin already exists
-    const adminExists = await Auth.findOne({ where: { roles: "admin" } });
-    if (adminExists) {
-      return res
-        .status(403)
-        .json({ message: "Admin already exists. Please log in." });
-    }
-
-    // Hash password
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    // Create admin user
-    const adminUser = await Auth.create({
-      name,
-      email,
-      password: hashedPassword,
-      roles: "admin",
-    });
-
-    res.status(201).json({
-      success: true,
-      message: "Admin registered successfully",
-      admin: {
-        id: adminUser.id,
-        name: adminUser.name,
-        email: adminUser.email,
-        roles: adminUser.roles,
-      },
-    });
-  } catch (error) {
-    console.error("Error in admin registration:", error);
-    res.status(500).json({ message: "Internal server error" });
-  }
-});
-const checkAdmin = asyncHandler(async (req, res) => {
+const loginAdmin = asyncHandler(async (req, res) => {
     try {
-      const adminExists = await Auth.findOne({ where: { roles: "admin" } });
-      res.json({ isAdminPresent: !!adminExists });
+      const { email, password } = req.body;
+  
+      // Check if an admin already exists
+      const admin = await Auth.findOne({ where: { email, roles: "admin" } });
+      if (!admin) {
+        return res.status(404).json({ message: "Admin not found" });
+      }
+  
+      // Validate password
+      const isPasswordValid = await bcrypt.compare(password, admin.password);
+      if (!isPasswordValid) {
+        return res.status(401).json({ message: "Invalid credentials" });
+      }
+  
+      // Generate JWT token
+      const token = jwt.sign(
+        { id: admin.id, roles: admin.roles },
+        process.env.JWT_SECRET || "your_secret_key", // fallback in case .env is missing
+        { expiresIn: "1h" }
+      );
+  
+      res.status(200).json({
+        success: true,
+        message: "Admin login successfully",
+        token,
+      });
     } catch (error) {
-      res.status(500).json({ message: "Error checking admin status" });
+      console.error("Error in admin login:", error);
+      res.status(500).json({ message: "Internal server error" });
     }
   });
   
-const register = asyncHandler(async (req, res) => {
-  try {
-    const { name, email, password, roles } = req.body;
-
-    // Check if the user already exists
-    const userExists = await Auth.findOne({ where: { email } });
-    if (userExists) {
-      return res.status(400).json({ message: "User already exists" });
+  // ------------------- Register New Users (Admin only) ------------
+  const register = asyncHandler(async (req, res) => {
+    try {
+      const { name, email, password, roles } = req.body;
+  
+      // Validate that the logged-in user is an admin
+      if (req.user.roles !== "admin") {
+        return res.status(403).json({ message: "You are not authorized!" });
+      }
+  
+      // Check if the user already exists
+      const userExists = await Auth.findOne({ where: { email } });
+      if (userExists) {
+        return res.status(400).json({ message: "User already exists" });
+      }
+  
+      // Hash the password before saving it
+      const hashedPassword = await bcrypt.hash(password, 10);
+  
+      // Create the new user
+      const newUser = await Auth.create({
+        name,
+        email,
+        roles,
+        password: hashedPassword,
+      });
+  
+      res.status(201).json({
+        success: true,
+        message: "User registered successfully",
+        newUser: {
+          id: newUser.id,
+          name: newUser.name,
+          email: newUser.email,
+          roles: newUser.roles,
+        },
+      });
+    } catch (error) {
+      console.error("Error in registration:", error);
+      res.status(500).json({ message: "Internal server error" });
     }
-    if (roles === "admin")
-      return res
-        .status(403)
-        .json({ message: "Only an existing admin can assign admin roles." });
-    // Hash the password
-    const hashedPassword = await bcrypt.hash(password, 10);
-    // Create new user
-    const newUser = await Auth.create({
-      name,
-      email,
-      roles,
-      password: hashedPassword,
-    });
-
-    res.status(201).json({
-      success: true,
-      message: "User registered successfully",
-      newUser: {
-        id: newUser.id,
-        name: newUser.name,
-        email: newUser.email,
-        roles: newUser.roles,
-      },
-    });
-  } catch (error) {
-    console.error("Error in registration:", error);
-    res.status(500).json({ message: "Internal server error" });
-  }
-});
-// -------------------registration process-----------
-// const register = asyncHandler(async (req, res, next) => {
-//   try {
-//     const { name, email, password, roles } = req.body;
-
-//     // Check if the user already exists
-//     const userExists = await Auth.findOne({ where: { email } });
-//     if (userExists) {
-//       return res.status(400).json({ message: "User already exists" });
-//     }
-
-//     // Ensure roles is a valid ENUM value
-//     const validRoles = [
-//       "admin",
-//       "teacher",
-//       "student",
-//       "librarian",
-//       "HR",
-//       "counselor",
-//     ];
-//     if (roles && !validRoles.includes(roles)) {
-//       return res.status(400).json({ message: "Invalid role provided" });
-//     }
-
-//     // Hash the password
-//     const saltRounds = 10;
-//     const hashedPassword = await bcrypt.hash(password, saltRounds);
-
-//     // Create the new user with the specified roles
-//     const newUser = await Auth.create({
-//       name,
-//       email,
-//       roles: roles || "student",
-//       password: hashedPassword,
-//     });
-
-//     res.status(201).json({
-//       success: true,
-//       message: "User created successfully",
-//       newUser: {
-//         id: newUser.id,
-//         name: newUser.name,
-//         email: newUser.email,
-//         roles: newUser.roles,
-//       },
-//     });
-//   } catch (error) {
-//     console.error("Error in registration:", error);
-//     res.status(500).json({ message: "Internal server error" });
-//   }
-// });
-
+  });
 // -------------------login processs-------------
 const login = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
@@ -203,8 +142,7 @@ const logout = asyncHandler(async (req, res) => {
 });
 
 module.exports = {
-  registerAdmin,
-  checkAdmin,
+  loginAdmin,
   register,
   login,
   getAllUsers,

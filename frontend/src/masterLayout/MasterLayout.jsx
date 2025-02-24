@@ -178,7 +178,7 @@ const MasterLayout = ({ children }) => {
             <li className="sidebar-menu-group-title">LIBRARY</li>
             <li>
               <NavLink
-                to="/add-book"
+                to="/books"
                 className={(navData) => (navData.isActive ? "active-page" : "")}
               >
                 <Icon icon="solar:BOOK-outline" className="menu-icon" />

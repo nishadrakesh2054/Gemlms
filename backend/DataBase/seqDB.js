@@ -11,7 +11,6 @@ const sequelize = new Sequelize(
     logging: false,
   }
 );
-
 // Connect to PostgreSQL
 const connectDB = async () => {
   try {
@@ -19,7 +18,7 @@ const connectDB = async () => {
     console.log("✅ PostgreSQL Database  connected successfully!");
   } catch (err) {
     console.error("❌ PostgreSQL connection failed:", err);
-    process.exit(1); 
+    process.exit(1);
   }
 };
 
