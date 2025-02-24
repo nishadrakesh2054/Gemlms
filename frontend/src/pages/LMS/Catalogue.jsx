@@ -12,7 +12,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 const Catalogue = () => {
   const dispatch = useDispatch();
-  
+
   const { books, isLoading, isError, message } = useSelector(
     (state) => state.books
   );
@@ -53,10 +53,14 @@ const Catalogue = () => {
         <div className="card basic-data-table">
           <div className="card-header">
             <div className="d-flex align-items-center justify-content-between">
-            <h5 className="card-title mb-0">Total Books</h5>
-            <h5 className="card-title mb-0">Add Books</h5>
+              <h5 className="card-title mb-0">Total Books</h5>
+              <Link
+                to="/add-book"
+                className="btn btn-success d-inline-flex align-items-center"
+              >
+                <Icon icon="mdi:book-plus" className="me-2" /> Add Book
+              </Link>{" "}
             </div>
-         
           </div>
           <div className="card-body">
             <table

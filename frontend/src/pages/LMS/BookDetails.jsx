@@ -39,6 +39,10 @@ const BookDetails = () => {
                   </li>
                 </li>
                 <li className="list-group-item">
+                  <strong> Date:</strong>{" "}
+                  {new Date(book.date).toDateString()}
+                </li>
+                <li className="list-group-item">
                   <strong>Language:</strong> {book.language}
                 </li>
                 <li className="list-group-item">
@@ -96,7 +100,7 @@ const BookDetails = () => {
                   {book.physicalDescription}
                 </li>
                 <li className="list-group-item">
-                  <strong>Subject:</strong> {book.subjectAddedEntry}
+                  <strong>Subject Added Entry:</strong> {book.subjectAddedEntry}
                 </li>
                 <li className="list-group-item">
                   <strong>Added Entry Personal Name:</strong>{" "}

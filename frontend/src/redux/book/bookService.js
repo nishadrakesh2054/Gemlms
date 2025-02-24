@@ -11,7 +11,7 @@ const fetchBooks = async () => {
 // Fetch a single book by ID
 const fetchBookById = async (bookId) => {
   const response = await axios.get(`${API_URL}/${bookId}`);
-  return response.data;
+  return response.data.data;
 };
 
 // Create a new book

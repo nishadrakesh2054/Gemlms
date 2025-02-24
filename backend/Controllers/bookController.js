@@ -136,47 +136,56 @@ const getBookById = async (req, res) => {
 
 // **Update Book**
 const updateBook = async (req, res) => {
-  try {
-    const { _id, _v, ...bookData } = req.body;
-
-    // Validate the updated data
-    validateBook(bookData);
-
-    let { noOfCopies, barCodes } = bookData;
-
-    if (!Array.isArray(barCodes)) {
-      return sendResponse(res, 400, "barCodes should be an array.");
-    }
-
-    if (barCodes.length === 1 && noOfCopies > 1) {
-      let baseBarcode = parseInt(barCodes[0]);
-      let generatedBarcodes = [barCodes[0]];
-
-      for (let i = 1; i < noOfCopies; i++) {
-        generatedBarcodes.push((baseBarcode + i).toString().padStart(8, "0"));
+    try {
+      const {id, ...bookData } = req.body;
+  
+      // Validate the updated data
+      validateBook(bookData);
+  
+      let { noOfCopies, barCodes } = bookData;
+  
+      // Ensure barCodes is an array
+      if (!Array.isArray(barCodes)) {
+        return sendResponse(res, 400, "barCodes should be an array.");
       }
-      barCodes = generatedBarcodes;
+  
+      // If only one barcode is provided and noOfCopies is greater than 1, generate missing barcodes
+      if (barCodes.length === 1 && noOfCopies > 1) {
+        let baseBarcode = parseInt(barCodes[0]);
+        let generatedBarcodes = [barCodes[0]];
+  
+        for (let i = 1; i < noOfCopies; i++) {
+          generatedBarcodes.push((baseBarcode + i).toString().padStart(8, "0"));
+        }
+        barCodes = generatedBarcodes;
+      }
+  
+      // Check if the number of barcodes matches the number of copies
+      if (barCodes.length !== noOfCopies) {
+        return sendResponse(res, 400, "Mismatch between copies and barcodes.");
+      }
+  
+      // Assign the updated barCodes and noOfCopies to bookData
+      bookData.barCodes = barCodes;
+      bookData.noOfCopies = noOfCopies;
+  
+      // Update book in the database
+      const [updated] = await Book.update(bookData, {
+        where: { id: req.params.id },
+      });
+  
+      if (!updated) {
+        return sendResponse(res, 404, "Book not found");
+      }
+  
+      // Fetch the updated book to return in the response
+      const updatedBook = await Book.findByPk(req.params.id);
+      sendResponse(res, 200, "Book updated successfully", updatedBook);
+    } catch (error) {
+      console.error(error);
+      sendResponse(res, 400, error.message);
     }
-
-    if (barCodes.length !== noOfCopies) {
-      return sendResponse(res, 400, "Mismatch between copies and barcodes.");
-    }
-
-    bookData.barCodes = barCodes;
-
-    // Update book in database
-    const [updated] = await Book.update(bookData, {
-      where: { id: req.params.id },
-    });
-
-    if (!updated) return sendResponse(res, 404, "Book not found");
-
-    sendResponse(res, 200, "Book updated successfully");
-  } catch (error) {
-    sendResponse(res, 400, error.message);
-  }
-};
-
+  };
 // **Delete Book**
 const deleteBook = async (req, res) => {
   try {

@@ -68,6 +68,7 @@ import HomePageTwo from "./pages/HomePageTwo";
 import Catalogue from "./pages/LMS/Catalogue";
 import BookDetails from "./pages/LMS/BookDetails";
 import EditBook from "./pages/LMS/EditBook";
+import AddBook from "./pages/LMS/AddBook";
 
 function App() {
   return (
@@ -81,6 +82,7 @@ function App() {
         <Route exact path="/books" element={<Catalogue/>} />
         <Route exact path="/books/:id" element={<BookDetails/>} />
         <Route exact path="/books/edit/:id" element={<EditBook/>} />
+        <Route exact path="/add-book" element={<AddBook/>} />
         {/* lms syatem design end */}
         <Route exact path="/lms" element={<HomePageSix />} />
         <Route exact path="/index-9" element={<HomePageNine />} />
