@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import MasterLayout from "../../masterLayout/MasterLayout";
 import Breadcrumb from "../../components/Breadcrumb";
 import $ from "jquery";
@@ -9,9 +9,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { getBooks, deleteBook } from "../../redux/book/bookSlice";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Loader from "../../components/Loader";
 
 const Catalogue = () => {
   const dispatch = useDispatch();
+  const tableRef = useRef(null);
 
   const { books, isLoading, isError, message } = useSelector(
     (state) => state.books
@@ -33,17 +35,32 @@ const Catalogue = () => {
   };
 
   // Initialize DataTable
-  useEffect(() => {
-    const table = $("#dataTable").DataTable({
-      pageLength: 10,
-    });
-    return () => {
-      table.destroy(true);
-    };
-  }, [books]);
+//   useEffect(() => {
+//     const table = $("#dataTable").DataTable({
+//       pageLength: 10,
+//     });
+//     return () => {
+//       table.destroy(true);
+//     };
+//   }, [books]);
 
+
+
+useEffect(() => {
+    if (!isLoading && !isError && books.length > 0) {
+      // Destroy existing DataTable instance if it exists
+      if ($.fn.DataTable.isDataTable(tableRef.current)) {
+        $(tableRef.current).DataTable().destroy();
+      }
+
+      // Initialize DataTable
+      $(tableRef.current).DataTable({
+        pageLength: 10,
+      });
+    }
+  }, [books, isLoading, isError]);
   // Loading and error states
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <><Loader/></>;
   if (isError) return <div>Error: {message}</div>;
 
   return (
