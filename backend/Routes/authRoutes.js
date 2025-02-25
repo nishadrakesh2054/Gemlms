@@ -3,16 +3,14 @@ const router = express.Router();
 const { protect, authorizeRoles } = require("../middleware/AuthMiddleware");
 
 const authController = require("../Controllers/authenticationcontroller");
-const Auth = require("../Models/authModel");
 
-// Route to register the first admin (Unprotected)
-router.post("/admin/login", authController.loginAdmin);
 router.post(
   "/register",
   protect,
-  authorizeRoles("admin"),
+  authorizeRoles("admin","librarian"),
   authController.register
 );
+
 router.route("/login").post(authController.login);
 router.route("/logout").get(authController.logout);
 
@@ -23,5 +21,7 @@ router.get(
   authorizeRoles("admin"),
   authController.getAllUsers
 );
+
+
 
 module.exports = router;
