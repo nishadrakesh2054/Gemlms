@@ -7,7 +7,7 @@ const authController = require("../Controllers/authenticationcontroller");
 router.post(
   "/register",
   protect,
-  authorizeRoles("admin","librarian"),
+  authorizeRoles("admin"),
   authController.register
 );
 

@@ -2,9 +2,15 @@ const express = require("express");
 const router = express.Router();
 const studentController = require("../Controllers/studentController");
 const { excelUpload } = require("../multerconfig/Storageconfig");
+const { protect, authorizeRoles } = require("../middleware/AuthMiddleware");
 
 // Fetch all students
-router.get("/students", studentController.getAllStudents);
+router.get(
+  "/students",
+  protect,
+  authorizeRoles("librarian"),
+  studentController.getAllStudents
+);
 // export  and save students from Excel
 router.get("/students/export", studentController.exportStudentsToExcel);
 
@@ -26,7 +32,5 @@ router.post(
   excelUpload.single("file"),
   studentController.UploadExcelStudent
 );
-
-
 
 module.exports = router;

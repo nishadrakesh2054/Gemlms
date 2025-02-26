@@ -6,19 +6,9 @@ const jwt = require("jsonwebtoken");
 const register = asyncHandler(async (req, res) => {
   try {
     const { name, email, password, roles } = req.body;
-    // Only admin and librarian can create users
-    if (
-      !req.user ||
-      (req.user.roles !== "admin" && req.user.roles !== "librarian")
-    ) {
+    // Only admin can gives roles
+    if (!req.user || req.user.roles !== "admin") {
       return res.status(403).json({ message: "Access denied" });
-    }
-
-    // Librarians can only add students
-    if (req.user.roles === "librarian" && roles !== "student") {
-      return res
-        .status(403)
-        .json({ message: "Librarian can only register students" });
     }
 
     // Check if user already exists
@@ -60,6 +50,7 @@ const register = asyncHandler(async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 });
+
 const login = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
@@ -102,8 +93,6 @@ const getAllUsers = asyncHandler(async (req, res) => {
   }
 });
 
-
-
 //--------------------logout user-------------
 const logout = asyncHandler(async (req, res) => {
   res.cookie("token", null, {
@@ -121,5 +110,4 @@ module.exports = {
   login,
   getAllUsers,
   logout,
- 
 };
