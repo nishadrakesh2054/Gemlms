@@ -91,10 +91,7 @@ const BookDetails = () => {
                   <strong>Place of Publication:</strong>{" "}
                   {book.placeOfPublication}
                 </li>
-                <li className="list-group-item">
-                  <strong>Place of Publication:</strong>{" "}
-                  {book.placeOfPublication}
-                </li>
+                
                 <li className="list-group-item">
                   <strong>Physical Description:</strong>{" "}
                   {book.physicalDescription}

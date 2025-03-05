@@ -1,7 +1,5 @@
 const asyncHandler = require("express-async-handler");
-// const BookTransaction = require("../Models/bookTransactionModel");
-// const Book = require("../Models/bookModel");
-// const Student = require("../Models/Students");
+
 
 const { BookTransaction, Book, Student } = require("../Models/index.model");
 

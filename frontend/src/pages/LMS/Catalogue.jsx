@@ -34,19 +34,7 @@ const Catalogue = () => {
     });
   };
 
-  // Initialize DataTable
-//   useEffect(() => {
-//     const table = $("#dataTable").DataTable({
-//       pageLength: 10,
-//     });
-//     return () => {
-//       table.destroy(true);
-//     };
-//   }, [books]);
-
-
-
-useEffect(() => {
+  useEffect(() => {
     if (!isLoading && !isError && books.length > 0) {
       // Destroy existing DataTable instance if it exists
       if ($.fn.DataTable.isDataTable(tableRef.current)) {
@@ -59,8 +47,12 @@ useEffect(() => {
       });
     }
   }, [books, isLoading, isError]);
-  // Loading and error states
-  if (isLoading) return <><Loader/></>;
+  if (isLoading)
+    return (
+      <>
+        <Loader />
+      </>
+    );
   if (isError) return <div>Error: {message}</div>;
 
   return (
@@ -127,19 +119,19 @@ useEffect(() => {
                     </td>
                     <td>
                       <Link
-                        to={`/books/${book.id}`} // Link to view book details
+                        to={`/books/${book.id}`}
                         className="w-32-px h-32-px me-8 bg-primary-light text-primary-600 rounded-circle d-inline-flex align-items-center justify-content-center"
                       >
                         <Icon icon="iconamoon:eye-light" />
                       </Link>
                       <Link
-                        to={`/books/edit/${book.id}`} // Link to edit book
+                        to={`/books/edit/${book.id}`}
                         className="w-32-px h-32-px me-8 bg-success-focus text-success-main rounded-circle d-inline-flex align-items-center justify-content-center"
                       >
                         <Icon icon="lucide:edit" />
                       </Link>
                       <button
-                        onClick={() => handleDelete(book.id)} // Delete book
+                        onClick={() => handleDelete(book.id)}
                         className="w-32-px h-32-px me-8 bg-danger-focus text-danger-main rounded-circle d-inline-flex align-items-center justify-content-center border-0"
                       >
                         <Icon icon="mingcute:delete-2-line" />

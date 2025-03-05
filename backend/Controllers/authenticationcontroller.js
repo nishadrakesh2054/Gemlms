@@ -102,8 +102,6 @@ const getAllUsers = asyncHandler(async (req, res) => {
   }
 });
 
-
-
 //--------------------logout user-------------
 const logout = asyncHandler(async (req, res) => {
   res.cookie("token", null, {
@@ -121,5 +119,4 @@ module.exports = {
   login,
   getAllUsers,
   logout,
- 
 };

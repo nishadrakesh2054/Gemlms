@@ -1,6 +1,7 @@
 const { DataTypes } = require("sequelize");
 const { sequelize } = require("../DataBase/seqDB");
 
+
 const Book = sequelize.define(
   "Book",
   {
@@ -16,6 +17,13 @@ const Book = sequelize.define(
     title: {
       type: DataTypes.STRING,
       allowNull: false,
+    },
+    subtitle: {
+      type: DataTypes.ARRAY(DataTypes.STRING),
+      allowNull: false,
+      validate: {
+        notEmpty: true,
+      },
     },
     accessionNumber: {
       type: DataTypes.INTEGER,
@@ -93,6 +101,11 @@ const Book = sequelize.define(
       type: DataTypes.INTEGER,
       allowNull: false,
       validate: { min: 1 },
+    },
+    availabilities: {
+      type: DataTypes.ARRAY(DataTypes.JSON),
+      allowNull: true,
+      defaultValue: [],
     },
   },
   {

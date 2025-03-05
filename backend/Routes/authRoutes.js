@@ -7,7 +7,7 @@ const authController = require("../Controllers/authenticationcontroller");
 router.post(
   "/register",
   protect,
-  authorizeRoles("admin","librarian"),
+  authorizeRoles("admin", "librarian"),
   authController.register
 );
 
@@ -21,7 +21,5 @@ router.get(
   authorizeRoles("admin"),
   authController.getAllUsers
 );
-
-
 
 module.exports = router;
